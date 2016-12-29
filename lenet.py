@@ -57,7 +57,7 @@ if __name__=='__main__':
   num_hidden = 64
   ksize = 2
   pool_stride = 2
-  dropout = 0.9
+  dropout = 0.95
 
   graph = tf.Graph()
   with graph.as_default():
@@ -96,16 +96,26 @@ if __name__=='__main__':
       # c1
       c1 = tf.nn.conv2d(data, c1_weights, [1, 1, 1, 1], padding='SAME')
       c1 = tf.nn.relu(c1 + c1_biases)
+      if data_type == 'train':
+        c1 = tf.nn.dropout(c1, keep_prob)
       # s2
       s1 = tf.nn.max_pool(c1, [1, ksize, ksize, 1], [1, pool_stride, pool_stride, 1], padding='SAME')
+      if data_type == 'train':
+        s1 = tf.nn.dropout(s1, keep_prob)
       # c3
       c3 = tf.nn.conv2d(s1, c3_weights, [1, 1, 1, 1], padding='SAME')
       c3 = tf.nn.relu(c3 + c3_biases)
+      if data_type == 'train':
+        c3 = tf.nn.dropout(c3, keep_prob)
       # s4
       s4 = tf.nn.max_pool(c3, [1, ksize, ksize, 1], [1, pool_stride, pool_stride,1], padding='SAME')
+      if data_type == 'train':
+        s4 = tf.nn.dropout(s4, keep_prob)
       # c5
       c5 = tf.nn.conv2d(s4, c5_weights, [1, 1, 1, 1], padding='SAME')
       c5 = tf.nn.relu(c5 + c5_biases)
+      if data_type == 'train':
+        c5 = tf.nn.dropout(c5, keep_prob)
       # reshape the output of c5
       shape = c5.get_shape().as_list()
       reshape = tf.nn.relu(tf.reshape(c5, [shape[0], shape[1] * shape[2] * shape[3]]))
