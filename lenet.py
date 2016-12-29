@@ -108,7 +108,7 @@ if __name__=='__main__':
       c5 = tf.nn.relu(c5 + c5_biases)
       # reshape the output of c5
       shape = c5.get_shape().as_list()
-      reshape = tf.reshape(c5, [shape[0], shape[1] * shape[2] * shape[3]])
+      reshape = tf.nn.relu(tf.reshape(c5, [shape[0], shape[1] * shape[2] * shape[3]]))
       if data_type == 'train':
         reshape = tf.nn.dropout(reshape, keep_prob)
       # F6
